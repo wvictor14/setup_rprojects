@@ -7,3 +7,13 @@ test_that("write_targets_scripts creates _targets.R file", {
       })
     }, TRUE)
 })
+
+test_that("write_r_profile creates .Rprofile file", {
+  expect_true(
+    {
+      withr::with_tempdir({
+        write_r_profile()
+        fs::file_exists('.Rprofile')
+      })
+    }, TRUE)
+})

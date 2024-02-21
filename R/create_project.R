@@ -17,8 +17,6 @@ create_project <- function(path) {
 
       # set up renv
       renv::init()
-      source('.Rprofile')
-      renv::install(packages)
 
       # gitignore
       cat("*.Rproj", file = '.gitignore', append = TRUE)
