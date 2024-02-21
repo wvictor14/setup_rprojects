@@ -17,11 +17,11 @@ create_project <- function(path) {
 
       # set up renv
       renv::init()
-      source(here::here('.Rprofile'))
+      source('.Rprofile')
       renv::install(packages)
 
       # gitignore
-      cat("*.Rproj", file = here::here('.gitignore'), append = TRUE)
+      cat("*.Rproj", file = '.gitignore', append = TRUE)
     }
   )
 
@@ -57,7 +57,7 @@ writeLines(text = text, con = here::here('_targets.R'))
 #' @return invisibly returns path to rprofile
 #' @export
 write_r_profile <- function() {
-  file <- here::here('.Rprofile')
+  file <- '.Rprofile'
   text <-
     '
 source("renv/activate.R")
