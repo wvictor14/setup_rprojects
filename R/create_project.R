@@ -7,10 +7,34 @@
 #' @export
 create_project <- function(path) {
 
-  usethis::create_package(path)
+  usethis::create_package(path, open = FALSE)
 
+  withr::with_dir(
+    path,
+    {
+      write_targets_script()
+      write_r_profile()
+
+      # set up renv
+      renv::init()
+      source(here::here('.Rprofile'))
+      renv::install(packages)
+
+      # gitignore
+      cat("*.Rproj", file = here::here('.gitignore'), append = TRUE)
+    }
+  )
+
+}
+
+
+#' initializes targets and creates minimal _targets.R template
+#'
+#' @return NULL
+#' @export
+write_targets_script <- function() {
   #set up targets first
-  targets::use_targets()
+  targets::use_targets(overwrite = TRUE, open = FALSE)
   text <-
     '
 library(targets)
@@ -26,10 +50,16 @@ list(
 )
 '
 writeLines(text = text, con = here::here('_targets.R'))
+}
 
-# rprofile
-text <-
-  '
+#' writes r profile templates to current directory
+#'
+#' @return invisibly returns path to rprofile
+#' @export
+write_r_profile <- function() {
+  file <- here::here('.Rprofile')
+  text <-
+    '
 source("renv/activate.R")
 packages <- c(
   "tibble", "readr", "dplyr", "tidyr", "glue", "stringr", "purrr",
@@ -56,14 +86,7 @@ if (interactive()) {
 }
 '
 
-writeLines(text = text, con = here::here('.Rprofile'))
+writeLines(text = text, con = file)
 
-# set up renv
-renv::init()
-source(here::here('.Rprofile'))
-renv::install(packages)
-
-# gitignore
-cat("*.Rproj", file = here::here('.gitignore'), append = TRUE)
-
+invisible(file)
 }
